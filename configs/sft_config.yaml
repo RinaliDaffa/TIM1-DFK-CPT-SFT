@@ -1,0 +1,97 @@
+# ==============================================================================
+# Tim1-DFK: Supervised Fine-Tuning (SFT) Configuration
+# ==============================================================================
+# Base Model: Qwen3-8B (via Unsloth pre-quantized, or CPT checkpoint)
+# Task: DFK Classification & Reasoning (Alpaca format)
+# Library: Unsloth + HuggingFace TRL SFTTrainer
+# ==============================================================================
+
+# --- Model ---
+model:
+  # OPSI 1: Langsung dari base model (jika CPT belum selesai)
+  name: "unsloth/Qwen3-8B-bnb-4bit"
+  # OPSI 2: Dari hasil CPT (uncomment setelah CPT selesai)
+  # name: "outputs/cpt/lora_adapter"
+  max_seq_length: 2048
+  load_in_4bit: true
+  dtype: null
+
+# --- LoRA Configuration ---
+lora:
+  r: 16
+  lora_alpha: 32
+  lora_dropout: 0.05
+  target_modules:
+    - "q_proj"
+    - "k_proj"
+    - "v_proj"
+    - "o_proj"
+    - "gate_proj"
+    - "up_proj"
+    - "down_proj"
+  bias: "none"
+  use_rslora: true
+
+# --- Data ---
+data:
+  train_path: "Dataset/SFT/processed/sft_train_alpaca.json"
+  val_path: "Dataset/SFT/processed/sft_val_alpaca.json"
+  format: "alpaca" # Options: "alpaca", "chatml"
+  max_samples: null # Set to limit samples (for testing)
+
+# --- SFT Instruction Template ---
+instruction:
+  system_prompt: >
+    Kamu adalah asisten ahli Kementerian Komunikasi dan Digital (Komdigi) Indonesia
+    yang bertugas menganalisis dan mengklasifikasikan konten teks terkait
+    Disinformasi, Fitnah, dan Kebencian (DFK). Berikan klasifikasi yang akurat
+    beserta penjelasan reasoning yang jelas.
+
+  task_instruction: >
+    Klasifikasikan teks berikut apakah termasuk konten DFK
+    (Disinformasi, Fitnah, atau Kebencian) dan berikan alasannya.
+
+# --- DFK Labels ---
+labels:
+  - "Hoax"
+  - "Disinformasi"
+  - "Misinformasi"
+  - "Ujaran Kebencian"
+  - "Fitnah"
+  - "Bukan DFK"
+
+# --- Training ---
+training:
+  output_dir: "outputs/sft"
+  num_train_epochs: 5
+  per_device_train_batch_size: 2
+  gradient_accumulation_steps: 4 # Effective batch = 2 * 4 = 8
+  learning_rate: 2.0e-4
+  lr_scheduler_type: "cosine"
+  warmup_ratio: 0.1
+  weight_decay: 0.01
+  max_grad_norm: 1.0
+  fp16: true  # Use fp16 for T4 GPU compatibility
+  bf16: false
+  seed: 42
+
+  # Evaluation
+  eval_strategy: "steps"
+  eval_steps: 50
+
+  # Saving
+  save_strategy: "steps"
+  save_steps: 50
+  save_total_limit: 3
+  load_best_model_at_end: true
+  metric_for_best_model: "eval_loss"
+
+  # Logging
+  logging_steps: 10
+  report_to: "wandb"
+
+# --- W&B ---
+wandb:
+  project: "tim1-dfk"
+  run_name: "sft-qwen3-8b-alpaca"
+  tags: ["sft", "qwen3", "dfk", "alpaca", "fase1"]

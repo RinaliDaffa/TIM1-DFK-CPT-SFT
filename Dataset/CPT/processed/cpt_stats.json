@@ -1,0 +1,13 @@
+{
+  "total_documents": 11456,
+  "total_words": 225821,
+  "total_characters": 1505781,
+  "avg_words_per_doc": 19.7,
+  "avg_chars_per_doc": 131.4,
+  "min_words": 2,
+  "max_words": 55,
+  "source_files": [
+    "14k-manueltonneau-indonesian_hate_speech.csv"
+  ],
+  "duplicates_removed": 115
+}

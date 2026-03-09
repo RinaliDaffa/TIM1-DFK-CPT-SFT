@@ -1,0 +1,19 @@
+{
+  "total_entries": 21980,
+  "train_size": 19782,
+  "val_size": 2198,
+  "val_ratio": 0.1,
+  "label_distribution": {
+    "Hoax": 10157,
+    "Disinformasi": 4939,
+    "Misinformasi": 19,
+    "Ujaran Kebencian": 6855,
+    "Fitnah": 10
+  },
+  "processed_files": [
+    "konten_dfk_komdigi.csv",
+    "data disinformasi-hoaks.csv",
+    "konten_dfk_terverifikasi.csv"
+  ],
+  "format": "alpaca"
+}

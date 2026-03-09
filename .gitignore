@@ -1,0 +1,37 @@
+# Model outputs & checkpoints (large files, don't commit)
+outputs/
+*.bin
+*.safetensors
+*.pt
+*.pth
+
+# HuggingFace cache
+hf_cache/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+
+# Environment
+.env
+*.log
+
+# Temp files
+tmpclaude-*
+
+# IDE
+.claude/
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# W&B
+wandb/
+
+# IDE
+.vscode/
+.idea/
