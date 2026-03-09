@@ -103,10 +103,11 @@ Kami **TIDAK memerlukan** RAM 64 GB atau CPU 16 Core untuk tahap preprocessing, 
 | Base Model (download sementara)    | ~15 GB (ephemeral, di local disk Colab) |
 | Checkpoint LoRA Adapter CPT        | ~150 MB                                 |
 | Checkpoint LoRA Adapter SFT        | ~150 MB                                 |
+| Model Final Merged (16-bit)        | ~16 GB (di Google Drive)                |
 | W&B Logs                           | ~50 MB                                  |
-| **Total permanen di Google Drive** | **< 500 MB**                            |
+| **Total permanen di Google Drive** | **~17 GB**                              |
 
-Model base 15 GB didownload ke disk lokal Colab (ephemeral) dan **tidak perlu disimpan** permanen karena bisa didownload ulang kapan saja. Yang disimpan permanen hanya adapter LoRA yang berukuran sangat kecil.
+Model base 15 GB didownload ke disk lokal Colab (ephemeral) dan **tidak perlu disimpan** permanen karena bisa didownload ulang kapan saja. Model final (merged 16-bit, ~16 GB) disimpan di Google Drive sebagai output akhir yang siap dipakai.
 
 ---
 
@@ -171,7 +172,7 @@ Seluruh pipeline Tim1-DFK berjalan mandiri dengan model open-source. Akun AI ber
 | Kebutuhan                          | Status       | Keterangan                                                                                |
 | ---------------------------------- | ------------ | ----------------------------------------------------------------------------------------- |
 | **W&B (Weights & Biases) Account** | ✅ Wajib     | Gratis. Untuk monitoring grafik training loss secara real-time via web browser            |
-| **HuggingFace Account**            | ✅ Wajib     | Gratis. Untuk download model Qwen3 dan upload model hasil training                      |
+| **HuggingFace Account**            | ✅ Wajib     | Gratis. Untuk download base model Qwen3                                                  |
 | **Google Drive**                   | ✅ Sudah ada | User memiliki 2 TB. Digunakan untuk menyimpan dataset, skrip, dan checkpoint LoRA adapter |
 | Akses VPN                          | ❌ Tidak     | Tidak diperlukan                                                                          |
 | Integrasi antar server tim         | ⏳ Fase 3    | Diperlukan nanti saat integrasi dengan Tim2 (Agentic AI)                                  |
