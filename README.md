@@ -65,10 +65,17 @@ Label klasifikasi:
     │  └ Inference test           │
     └──────────────┬──────────────┘
                    │
+    ┌──────────────▼─────────────────┐
+    │  Tahap 3: Merge & Upload       │
+    │  2_SFT_Colab.ipynb Step 9   │
+    │  ├ Merge LoRA → model 16-bit│
+    │  └ Upload ke HuggingFace    │
+    └──────────────┬──────────────┘
+                   │
     ┌──────────────▼──────────────┐
-    │  Model Final (DFK           │
-    │  Classifier + Reasoner)     │
-    │  outputs/sft/lora_adapter/  │
+    │  Model Final (16-bit)       │
+    │  HuggingFace Hub            │
+    │  + outputs/sft/merged_model/│
     └─────────────────────────────┘
 ```
 
@@ -76,7 +83,7 @@ Label klasifikasi:
 
 ```
 Dataset/CPT/*.csv ──► [1_CPT_Colab] preprocess ──► cpt_corpus.txt ──► training ──► outputs/cpt/lora_adapter/
-Dataset/SFT/*.csv ──► [2_SFT_Colab] preprocess ──► sft_train_alpaca.json ──► training ──► outputs/sft/lora_adapter/
+Dataset/SFT/*.csv ──► [2_SFT_Colab] preprocess ──► sft_train_alpaca.json ──► training ──► merge ──► outputs/sft/merged_model/ ──► HuggingFace Hub
 ```
 
 ---
@@ -132,7 +139,9 @@ Tim1-DFK/
 │
 ├── outputs/                           # Output training (tidak di-commit)
 │   ├── cpt/lora_adapter/             # LoRA adapter CPT (~150 MB)
-│   └── sft/lora_adapter/             # LoRA adapter SFT (~150 MB)
+│   └── sft/
+│       ├── lora_adapter/             # LoRA adapter SFT (~150 MB)
+│       └── merged_model/             # Model final 16-bit (~16 GB) → upload ke HF
 │
 ├── requirements.txt                   # Dependensi Python
 └── README.md                          # File ini
@@ -183,7 +192,7 @@ Strategi lengkap: [docs/data_strategy.md](docs/data_strategy.md)
 - Google Colab dengan GPU T4 (minimum), disarankan Colab Pro
 - Akun Google Drive (untuk menyimpan dataset dan output)
 - Akun Weights & Biases gratis (untuk monitoring training)
-- Akun HuggingFace gratis (untuk download model)
+- Akun HuggingFace gratis (untuk download model + upload model final)
 
 ### Langkah-langkah (Google Colab)
 
@@ -219,9 +228,14 @@ Strategi lengkap: [docs/data_strategy.md](docs/data_strategy.md)
    - `TEST_MODE = True` untuk tes pipeline cepat (~5 menit)
    - `TEST_MODE = False` untuk full training (~2-4 jam)
    - `USE_CPT_LORA = True` (otomatis load CPT LoRA)
-4. Jalankan semua cell secara berurutan (Step 1 → Step 9)
+   - `HF_REPO_ID = "username/repo"` (repo HuggingFace untuk upload)
+   - `PUSH_TO_HUB = True` (upload model final ke HuggingFace)
+4. Jalankan semua cell secara berurutan (Step 1 → Step 10)
 
-**Output:** `outputs/sft/lora_adapter/`
+**Output:**
+- `outputs/sft/lora_adapter/` — LoRA adapter (untuk incremental training)
+- `outputs/sft/merged_model/` — Model final 16-bit (~16 GB)
+- **HuggingFace Hub** — Model di-upload otomatis
 
 ### Kapan Menjalankan Notebook Mana?
 
@@ -325,7 +339,7 @@ Training otomatis mendeteksi LoRA adapter yang sudah ada:
 |----------|---------|-------------|
 | GPU | Tesla T4 (15 GB VRAM) | L4/A100 |
 | RAM | 8 GB | 16 GB |
-| Storage (Drive) | 500 MB | 2 GB |
+| Storage (Drive) | 500 MB | 20 GB (termasuk merged model) |
 | Colab | Free (sering timeout) | **Colab Pro** |
 
 **Estimasi waktu training (T4):**
@@ -335,12 +349,13 @@ Training otomatis mendeteksi LoRA adapter yang sudah ada:
 | Download model | 5-10 menit | 5-10 menit |
 | CPT | ~5 menit | 1.5-3 jam |
 | SFT | ~5 menit | 2-4 jam |
-| **Total** | **~15 menit** | **3-7 jam** |
+| Merge + Upload HF | ~2 menit | 15-30 menit |
+| **Total** | **~15 menit** | **3.5-7.5 jam** |
 
 **Yang perlu disiapkan:**
 - Akun W&B gratis (monitoring)
-- Akun HuggingFace gratis (download model)
-- Google Drive (sudah ada)
+- Akun HuggingFace gratis (download model + upload model final)
+- Google Drive (sudah ada, disarankan ~20 GB kosong untuk merged model)
 
 Detail lengkap: [docs/kebutuhan_infrastruktur.md](docs/kebutuhan_infrastruktur.md)
 
@@ -379,7 +394,8 @@ Detail lengkap: [docs/kebutuhan_infrastruktur.md](docs/kebutuhan_infrastruktur.m
 | Dataset klasifikasi + reasoning | Format Alpaca dengan 6 label DFK + template reasoning | Step 6 di `notebooks/2_SFT_Colab.ipynb` |
 | Jalankan SFT setelah CPT | Auto-load CPT LoRA, notebook end-to-end | `notebooks/2_SFT_Colab.ipynb` |
 | Inference test | Test sampel DFK di notebook | Step 8 di `notebooks/2_SFT_Colab.ipynb` |
+| Merge & Upload HF | Merge LoRA → model 16-bit, upload ke HuggingFace | Step 9 di `notebooks/2_SFT_Colab.ipynb` |
 
 ---
 
-*Tim1-DFK — AITF 2025*
+*Tim1-DFK — AITF 2026*
