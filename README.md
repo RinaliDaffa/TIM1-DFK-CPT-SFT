@@ -66,16 +66,15 @@ Label klasifikasi:
     └──────────────┬──────────────┘
                    │
     ┌──────────────▼─────────────────┐
-    │  Tahap 3: Merge & Upload       │
-    │  2_SFT_Colab.ipynb Step 9   │
-    │  ├ Merge LoRA → model 16-bit│
-    │  └ Upload ke HuggingFace    │
-    └──────────────┬──────────────┘
+    │  Tahap 3: Merge → Model Final  │
+    │  2_SFT_Colab.ipynb Step 9      │
+    │  └ Merge LoRA → model 16-bit   │
+    └──────────────┬─────────────────┘
                    │
     ┌──────────────▼──────────────┐
     │  Model Final (16-bit)       │
-    │  HuggingFace Hub            │
-    │  + outputs/sft/merged_model/│
+    │  outputs/sft/merged_model/  │
+    │  (tersimpan di Google Drive)│
     └─────────────────────────────┘
 ```
 
@@ -83,7 +82,7 @@ Label klasifikasi:
 
 ```
 Dataset/CPT/*.csv ──► [1_CPT_Colab] preprocess ──► cpt_corpus.txt ──► training ──► outputs/cpt/lora_adapter/
-Dataset/SFT/*.csv ──► [2_SFT_Colab] preprocess ──► sft_train_alpaca.json ──► training ──► merge ──► outputs/sft/merged_model/ ──► HuggingFace Hub
+Dataset/SFT/*.csv ──► [2_SFT_Colab] preprocess ──► sft_train_alpaca.json ──► training ──► merge ──► outputs/sft/merged_model/
 ```
 
 ---
@@ -141,7 +140,7 @@ Tim1-DFK/
 │   ├── cpt/lora_adapter/             # LoRA adapter CPT (~150 MB)
 │   └── sft/
 │       ├── lora_adapter/             # LoRA adapter SFT (~150 MB)
-│       └── merged_model/             # Model final 16-bit (~16 GB) → upload ke HF
+│       └── merged_model/             # Model final 16-bit (~16 GB)
 │
 ├── requirements.txt                   # Dependensi Python
 └── README.md                          # File ini
@@ -192,7 +191,7 @@ Strategi lengkap: [docs/data_strategy.md](docs/data_strategy.md)
 - Google Colab dengan GPU T4 (minimum), disarankan Colab Pro
 - Akun Google Drive (untuk menyimpan dataset dan output)
 - Akun Weights & Biases gratis (untuk monitoring training)
-- Akun HuggingFace gratis (untuk download model + upload model final)
+- Akun HuggingFace gratis (untuk download base model)
 
 ### Langkah-langkah (Google Colab)
 
@@ -228,14 +227,12 @@ Strategi lengkap: [docs/data_strategy.md](docs/data_strategy.md)
    - `TEST_MODE = True` untuk tes pipeline cepat (~5 menit)
    - `TEST_MODE = False` untuk full training (~2-4 jam)
    - `USE_CPT_LORA = True` (otomatis load CPT LoRA)
-   - `HF_REPO_ID = "username/repo"` (repo HuggingFace untuk upload)
-   - `PUSH_TO_HUB = True` (upload model final ke HuggingFace)
+   - `SAVE_MERGED_16BIT = True` (simpan model final 16-bit ke Google Drive)
 4. Jalankan semua cell secara berurutan (Step 1 → Step 10)
 
 **Output:**
 - `outputs/sft/lora_adapter/` — LoRA adapter (untuk incremental training)
-- `outputs/sft/merged_model/` — Model final 16-bit (~16 GB)
-- **HuggingFace Hub** — Model di-upload otomatis
+- `outputs/sft/merged_model/` — Model final 16-bit (~16 GB, tersimpan di Google Drive)
 
 ### Kapan Menjalankan Notebook Mana?
 
@@ -349,12 +346,12 @@ Training otomatis mendeteksi LoRA adapter yang sudah ada:
 | Download model | 5-10 menit | 5-10 menit |
 | CPT | ~5 menit | 1.5-3 jam |
 | SFT | ~5 menit | 2-4 jam |
-| Merge + Upload HF | ~2 menit | 15-30 menit |
+| Merge → Model Final | ~2 menit | 15-30 menit |
 | **Total** | **~15 menit** | **3.5-7.5 jam** |
 
 **Yang perlu disiapkan:**
 - Akun W&B gratis (monitoring)
-- Akun HuggingFace gratis (download model + upload model final)
+- Akun HuggingFace gratis (download base model)
 - Google Drive (sudah ada, disarankan ~20 GB kosong untuk merged model)
 
 Detail lengkap: [docs/kebutuhan_infrastruktur.md](docs/kebutuhan_infrastruktur.md)
@@ -394,7 +391,7 @@ Detail lengkap: [docs/kebutuhan_infrastruktur.md](docs/kebutuhan_infrastruktur.m
 | Dataset klasifikasi + reasoning | Format Alpaca dengan 6 label DFK + template reasoning | Step 6 di `notebooks/2_SFT_Colab.ipynb` |
 | Jalankan SFT setelah CPT | Auto-load CPT LoRA, notebook end-to-end | `notebooks/2_SFT_Colab.ipynb` |
 | Inference test | Test sampel DFK di notebook | Step 8 di `notebooks/2_SFT_Colab.ipynb` |
-| Merge & Upload HF | Merge LoRA → model 16-bit, upload ke HuggingFace | Step 9 di `notebooks/2_SFT_Colab.ipynb` |
+| Merge → Model Final | Merge LoRA → model 16-bit, simpan di Google Drive | Step 9 di `notebooks/2_SFT_Colab.ipynb` |
 
 ---
 
