@@ -358,41 +358,5 @@ Detail lengkap: [docs/kebutuhan_infrastruktur.md](docs/kebutuhan_infrastruktur.m
 
 ---
 
-## Pemetaan Tugas ke Implementasi
-
-### Fase 1 — Sub-tim A: Infrastruktur & Pipeline
-
-| Tugas | Implementasi | File |
-|-------|-------------|------|
-| Pilih base model + justifikasi | Qwen3-8B (via Unsloth), benchmark comparison | [docs/model_justification.md](docs/model_justification.md) |
-| Pipeline pretraining (CPT) | Preprocessing + training (self-contained) | `notebooks/1_CPT_Colab.ipynb` |
-| Pipeline fine-tuning (SFT) | Preprocessing + training + inference (self-contained) | `notebooks/2_SFT_Colab.ipynb` |
-| Dashboard monitoring | W&B integration di kedua notebook | W&B Step 4 di setiap notebook |
-| Uji coba skala kecil | TEST_MODE dengan MAX_ROWS | Step 1 Configuration di setiap notebook |
-
-### Fase 1 — Sub-tim B: Kurasi & Strategi Data
-
-| Tugas | Implementasi | File |
-|-------|-------------|------|
-| Strategi komposisi data | Dokumen proporsi CPT (50/40/10) dan SFT | [docs/data_strategy.md](docs/data_strategy.md) |
-| Kumpulkan data mentah DFK | 3 dataset: hate speech, hoax, konten Komdigi | `Dataset/CPT/*.csv`, `Dataset/SFT/*.csv` |
-
-### Fase 2 — Sub-tim A: Continual Pretraining
-
-| Tugas | Implementasi | File |
-|-------|-------------|------|
-| Jalankan CPT | Notebook Colab end-to-end | `notebooks/1_CPT_Colab.ipynb` |
-| Eksperimen hyperparameter | Configurable di Step 1 + W&B tracking | Step 1 Configuration + W&B |
-
-### Fase 2 — Sub-tim B: Supervised Fine-Tuning
-
-| Tugas | Implementasi | File |
-|-------|-------------|------|
-| Dataset klasifikasi + reasoning | Format Alpaca dengan 6 label DFK + template reasoning | Step 6 di `notebooks/2_SFT_Colab.ipynb` |
-| Jalankan SFT setelah CPT | Auto-load CPT LoRA, notebook end-to-end | `notebooks/2_SFT_Colab.ipynb` |
-| Inference test | Test sampel DFK di notebook | Step 8 di `notebooks/2_SFT_Colab.ipynb` |
-| Merge → Model Final | Merge LoRA → model 16-bit, simpan di Google Drive | Step 9 di `notebooks/2_SFT_Colab.ipynb` |
-
----
 
 *Tim1-DFK — AITF 2026*
